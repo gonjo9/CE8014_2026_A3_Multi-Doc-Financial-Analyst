@@ -158,12 +158,12 @@ def run_evaluation():
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"\n==================================================")
-    print(f"📄 ASSIGNMENT 3 EVALUATION REPORT")
-    print(f"⏰ Time: {timestamp}")
-    print(f"🤖 Agent Mode: {TEST_MODE}")
+    print("ASSIGNMENT 3 EVALUATION REPORT")
+    print(f"Time: {timestamp}")
+    print(f"Agent Mode: {TEST_MODE}")
     print(f"==================================================\n")
 
-    print(colored("🚀 STARTING AI-POWERED EVALUATION...", "cyan", attrs=["bold"]))
+    print(colored("STARTING AI-POWERED EVALUATION...", "cyan", attrs=["bold"]))
     print(f"==================================================\n")
 
 
@@ -189,17 +189,17 @@ def run_evaluation():
             print(f"A: {display_answer}")
             if "PASS" in result:
                 score += 1
-                print(colored(f"✅ PASS ({elapsed:.2f}s)", "green"))
+                print(colored(f"PASS ({elapsed:.2f}s)", "green"))
             else:
-                print(colored(f"❌ FAIL ({elapsed:.2f}s)", "red"))
+                print(colored(f"FAIL ({elapsed:.2f}s)", "red"))
                 print(f"   Agent Answer: {display_answer}")
                 print(f"   Judge Verdict: {result}")
 
         except Exception as e:
-            print(colored(f"❌ CRASH: {e}", "red"))
+            print(colored(f"CRASH: {e}", "red"))
         print("-" * 50)
 
-    print(colored(f"\n📊 FINAL SCORE: {score}/{total}", "magenta", attrs=["bold"]))
+    print(colored(f"\nFINAL SCORE: {score}/{total}", "magenta", attrs=["bold"]))
 
 if __name__ == "__main__":
     log_filename = f"evaluation_log_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"

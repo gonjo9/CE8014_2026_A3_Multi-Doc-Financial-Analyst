@@ -22,10 +22,13 @@ def build_vector_dbs():
     ETL Pipeline: Load PDF -> Clean -> Split -> Embed -> Store in ChromaDB
     """
     embeddings = get_embeddings()
+    chunk_size = int(os.getenv("CHUNK_SIZE", "1000"))
+    chunk_overlap = int(os.getenv("CHUNK_OVERLAP", "200"))
+    print(colored(f"[Chunking] chunk_size={chunk_size}, chunk_overlap={chunk_overlap}", "cyan"))
     
     if not os.path.exists(DATA_FOLDER):
         os.makedirs(DATA_FOLDER)
-        print(colored(f"⚠️ Warning: {DATA_FOLDER} directory was empty. Creating it...", "yellow"))
+        print(colored(f"[Warning] {DATA_FOLDER} directory was empty. Creating it...", "yellow"))
 
     # Dynamic file discovery: If a file is in DATA_FOLDER but not in FILES, add it.
     # This makes the project much more extensible!
@@ -35,21 +38,21 @@ def build_vector_dbs():
             key = f.split(".")[0].lower()
             if key not in all_files:
                 all_files[key] = f
-                print(colored(f"✨ Found new document: {f} (Setting key to '{key}')", "green"))
+                print(colored(f"[Info] Found new document: {f} (Setting key to '{key}')", "green"))
 
     for key, filename in all_files.items():
         persist_dir = os.path.join(DB_FOLDER, key)
         file_path = os.path.join(DATA_FOLDER, filename)
 
         if os.path.exists(persist_dir):
-            print(colored(f"✅ DB for '{key}' already exists at {persist_dir}. skipping...", "yellow"))
+            print(colored(f"[Skip] DB for '{key}' already exists at {persist_dir}.", "yellow"))
             continue
 
         if not os.path.exists(file_path):
-            print(colored(f"❌ Missing source file: {filename}", "red"))
+            print(colored(f"[Error] Missing source file: {filename}", "red"))
             continue
 
-        print(colored(f"🔨 Building Vector Index for {key}...", "cyan"))
+        print(colored(f"[Build] Building Vector Index for {key}...", "cyan"))
         
         # 1. Load PDF
         loader = PyMuPDFLoader(file_path)
@@ -61,8 +64,8 @@ def build_vector_dbs():
             doc.page_content = clean_text(doc.page_content)
 
         splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,     # Reduced slightly for better retrieval precision
-            chunk_overlap=200,   
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
             separators=["\n\n", "\n", " ", ""] 
         )
 
@@ -72,7 +75,7 @@ def build_vector_dbs():
         # 3. Embed & Store
         print("   - Embedding and storing... (This may take a while)")
         Chroma.from_documents(splits, embeddings, persist_directory=persist_dir)
-        print(colored(f"🎉 Successfully built DB for {key}!", "green"))
+        print(colored(f"[Done] Successfully built DB for {key}!", "green"))
 
 if __name__ == "__main__":
     build_vector_dbs()

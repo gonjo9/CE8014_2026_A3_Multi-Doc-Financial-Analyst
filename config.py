@@ -9,7 +9,7 @@ load_dotenv(override=True)
 # 1. Project Folders
 # ==============================================================================
 DATA_FOLDER = "data"
-DB_FOLDER = "chroma_db"
+DB_FOLDER = os.getenv("DB_FOLDER", "chroma_db")
 
 # ==============================================================================
 # 2. Dataset Configuration
@@ -24,10 +24,13 @@ FILES = {
 # ==============================================================================
 # 3. Embedding Model (Can Change)
 # ==============================================================================
-LOCAL_EMBEDDING_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+LOCAL_EMBEDDING_MODEL = os.getenv(
+    "LOCAL_EMBEDDING_MODEL",
+    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+)
 
 def get_embeddings():
-    print(colored(f"🔄 Loading Local Embedding Model: {LOCAL_EMBEDDING_MODEL}...", "cyan"))
+    print(colored(f"[Embedding] Loading Local Embedding Model: {LOCAL_EMBEDDING_MODEL}...", "cyan"))
     return HuggingFaceEmbeddings(model_name=LOCAL_EMBEDDING_MODEL)
 
 # ==============================================================================
@@ -44,7 +47,7 @@ def get_llm(temperature=0):
         from langchain_google_genai import ChatGoogleGenerativeAI
         api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
-            print(colored("⚠️ Warning: GOOGLE_API_KEY not found!", "red"))
+            print(colored("[Warning] GOOGLE_API_KEY not found!", "red"))
         return ChatGoogleGenerativeAI(
             model=os.getenv("GOOGLE_MODEL", "gemini-2.0-flash"),
             temperature=temperature,
@@ -57,7 +60,7 @@ def get_llm(temperature=0):
         from langchain_openai import ChatOpenAI
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            print(colored("⚠️ Warning: OPENAI_API_KEY not found!", "red"))
+            print(colored("[Warning] OPENAI_API_KEY not found!", "red"))
         return ChatOpenAI(
             model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
             temperature=temperature,
@@ -68,7 +71,7 @@ def get_llm(temperature=0):
         from langchain_anthropic import ChatAnthropic
         api_key = os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
-            print(colored("⚠️ Warning: ANTHROPIC_API_KEY not found!", "red"))
+            print(colored("[Warning] ANTHROPIC_API_KEY not found!", "red"))
         return ChatAnthropic(
             model=os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-latest"),
             temperature=temperature,
@@ -76,4 +79,4 @@ def get_llm(temperature=0):
         )
     
     else:
-        raise ValueError(f"❌ Unsupported LLM_PROVIDER: {provider}")
+        raise ValueError(f"Unsupported LLM_PROVIDER: {provider}")

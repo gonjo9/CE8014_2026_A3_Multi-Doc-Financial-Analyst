@@ -1,5 +1,5 @@
 __pycache__/
-venv/
+.venv/
 .DS_Store
 .idea/
 *.pyc
@@ -9,5 +9,11 @@ logs/
 cache/
 *.log
 *.csv
-chroma_db/
 .env
+chroma_db/
+chroma_db_c500/
+chroma_db_exp_l12_1000
+chroma_db_l6
+Assignment 3.txt
+benchmark_notes.md
+report.md
